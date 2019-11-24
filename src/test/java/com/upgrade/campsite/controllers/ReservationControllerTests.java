@@ -9,6 +9,9 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.http.MediaType;
 import org.springframework.restdocs.RestDocumentationContextProvider;
 import org.springframework.restdocs.RestDocumentationExtension;
+import org.springframework.restdocs.payload.RequestFieldsSnippet;
+import org.springframework.restdocs.payload.ResponseFieldsSnippet;
+import org.springframework.restdocs.request.PathParametersSnippet;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.reactive.server.WebTestClient;
 import reactor.core.publisher.Mono;
@@ -57,23 +60,8 @@ public class ReservationControllerTests {
 			.consumeWith(
 				document(
 					"successfulReservation",
-					requestFields(
-						fieldWithPath("arrivalDate").description(
-							"The date that user is expected to come to the volcano. It needs to be at least 1 day after"
-								+ " the booking date and up to 1 month after it. Expected format is \"dd/MM/yyyy\"."
-						),
-						fieldWithPath("departureDate").description(
-							"The date that user is expected to leave the volcano. It can max 3 days after arrival. "
-								+ "Expected format is \"dd/MM/yyyy\"."
-						),
-						fieldWithPath("userEmail").description("The user's email. It needs to be a valid email."),
-						fieldWithPath("userFirstName").description("The user's first name."),
-						fieldWithPath("userLastName").description("The user's last name.")
-					),
-					responseFields(
-						fieldWithPath("uniqueBookingIdentifier").description("The unique identifier "
-							+ "for booking when the reservation operation is successful.")
-					)
+					getReservationRequestFieldsDoc(),
+					getSuccessResponseDoc()
 				)
 			);
 	}
@@ -96,16 +84,13 @@ public class ReservationControllerTests {
 			.consumeWith(
 				document(
 					"errorReservation",
-					responseFields(
-						fieldWithPath("error").description("A short error name."),
-						fieldWithPath("errorDescription").description("Error description.")
-					)
+					getErrorResponseFieldsDoc()
 				)
 			);
 	}
 
 	@Test
-	public void successfulCancelReservationTest() {
+	public void successfulReservationCancellationTest() {
 		// GIVEN
 		String bookingId = "DEF456";
 
@@ -120,19 +105,15 @@ public class ReservationControllerTests {
 			.expectBody()
 			.consumeWith(
 				document(
-					"successfulCancelReservation",
-					pathParameters(
-						parameterWithName("bookingId")
-							.description("The unique booking identifier for the reservation to be cancelled.")
-					),
-					responseFields(
-						fieldWithPath("message").description("Message response for when the delete is successful"))
+					"successfulReservationCancellation",
+					getBookingIdPathParameterDoc(),
+					getSuccessResponseDoc()
 				)
 			);
 	}
 
 	@Test
-	public void errorCancelReservationTest() {
+	public void errorReservationCancellationTest() {
 		// GIVEN
 		String bookingId = "ABC123";
 
@@ -147,13 +128,66 @@ public class ReservationControllerTests {
 			.expectBody()
 			.consumeWith(
 				document(
-					"errorCancelReservation",
-					responseFields(
-						fieldWithPath("error").description("A short error name."),
-						fieldWithPath("errorDescription").description("Error description.")
-					)
+					"errorReservationCancellation",
+					getErrorResponseFieldsDoc()
 				)
 			);
+	}
+
+	@Test
+	public void successfulReservationUpdateTest() {
+		// GIVEN
+		ReservationRequest newReservationRequest = reservationRequestFor("John");
+		String bookingId = "DEF456";
+
+		// WHEN
+		WebTestClient.ResponseSpec exchange = this.webTestClient.put()
+			.uri("/reservations/{bookingId}", bookingId)
+			.body(Mono.just(newReservationRequest), ReservationRequest.class)
+			.accept(MediaType.APPLICATION_JSON)
+			.exchange();
+
+		// THEN
+		exchange.expectStatus().isOk()
+			.expectBody()
+			.consumeWith(
+				document(
+					"successfulReservationUpdate",
+					getBookingIdPathParameterDoc(),
+					getReservationRequestFieldsDoc(),
+					getSuccessResponseDoc()
+				)
+			);
+	}
+
+	@Test
+	public void errorReservationUpdateTest() {
+		// GIVEN
+		ReservationRequest newReservationRequest = reservationRequestFor("James");
+
+		// WHEN
+		WebTestClient.ResponseSpec exchange = this.webTestClient.post()
+			.uri("/reservations")
+			.body(Mono.just(newReservationRequest), ReservationRequest.class)
+			.accept(MediaType.APPLICATION_JSON)
+			.exchange();
+
+		// THEN
+		exchange.expectStatus().is5xxServerError()
+			.expectBody()
+			.consumeWith(
+				document(
+					"errorReservationUpdate",
+					getErrorResponseFieldsDoc()
+				)
+			);
+	}
+
+	private PathParametersSnippet getBookingIdPathParameterDoc() {
+		return pathParameters(
+			parameterWithName("bookingId")
+				.description("The unique booking identifier for the reservation to be cancelled.")
+		);
 	}
 
 	private ReservationRequest reservationRequestFor(String userFirstName) {
@@ -166,5 +200,37 @@ public class ReservationControllerTests {
 		newReservationRequest.setUserLastName("Doe");
 		newReservationRequest.setUserEmail("jdoe@upgrade.com");
 		return newReservationRequest;
+	}
+
+	private ResponseFieldsSnippet getErrorResponseFieldsDoc() {
+		return responseFields(
+			fieldWithPath("error").description("A short error name."),
+			fieldWithPath("errorDescription").description("Error description.")
+		);
+	}
+
+	private RequestFieldsSnippet getReservationRequestFieldsDoc() {
+		return requestFields(
+			fieldWithPath("arrivalDate").description(
+				"The date that user is expected to come to the volcano. It needs to be at least 1 day after"
+					+ " the booking date and up to 1 month after it. Expected format is \"dd/MM/yyyy\"."
+			),
+			fieldWithPath("departureDate").description(
+				"The date that user is expected to leave the volcano. It can max 3 days after arrival. "
+					+ "Expected format is \"dd/MM/yyyy\"."
+			),
+			fieldWithPath("userEmail").description("The user's email. It needs to be a valid email."),
+			fieldWithPath("userFirstName").description("The user's first name."),
+			fieldWithPath("userLastName").description("The user's last name.")
+		);
+	}
+
+	private ResponseFieldsSnippet getSuccessResponseDoc() {
+		return responseFields(
+			fieldWithPath("message")
+				.description("Message response for when the delete is successful"),
+			fieldWithPath("uniqueBookingIdentifier")
+				.description("The unique identifier for booking when the reservation operation is successful.")
+		);
 	}
 }
