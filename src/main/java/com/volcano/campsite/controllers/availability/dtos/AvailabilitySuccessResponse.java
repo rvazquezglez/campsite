@@ -1,7 +1,7 @@
-package com.upgrade.campsite.controllers.availability.dtos;
+package com.volcano.campsite.controllers.availability.dtos;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.upgrade.campsite.util.DateUtil;
+import com.volcano.campsite.util.DateUtil;
 
 import java.time.LocalDate;
 import java.util.List;

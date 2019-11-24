@@ -1,7 +1,7 @@
-package com.upgrade.campsite.controllers.reservation.dtos;
+package com.volcano.campsite.controllers.reservation.dtos;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.upgrade.campsite.util.DateUtil;
+import com.volcano.campsite.util.DateUtil;
 
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotEmpty;

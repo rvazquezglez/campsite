@@ -1,7 +1,7 @@
-package com.upgrade.campsite.controllers.availability;
+package com.volcano.campsite.controllers.availability;
 
-import com.upgrade.campsite.controllers.availability.dtos.AvailabilitySuccessResponse;
-import com.upgrade.campsite.util.DateUtil;
+import com.volcano.campsite.controllers.availability.dtos.AvailabilitySuccessResponse;
+import com.volcano.campsite.util.DateUtil;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -15,7 +15,7 @@ import java.time.temporal.ChronoUnit;
 import java.util.Arrays;
 import java.util.Optional;
 
-import static com.upgrade.campsite.util.DateUtil.DATE_TIME_FORMATTER;
+import static com.volcano.campsite.util.DateUtil.DATE_TIME_FORMATTER;
 
 @RestController
 @RequestMapping("/availability")

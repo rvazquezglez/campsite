@@ -1,8 +1,8 @@
-package com.upgrade.campsite.controllers.reservation;
+package com.volcano.campsite.controllers.reservation;
 
-import com.upgrade.campsite.controllers.reservation.dtos.ReservationErrorResponse;
-import com.upgrade.campsite.controllers.reservation.dtos.ReservationRequest;
-import com.upgrade.campsite.controllers.reservation.dtos.ReservationSuccessResponse;
+import com.volcano.campsite.controllers.reservation.dtos.ReservationErrorResponse;
+import com.volcano.campsite.controllers.reservation.dtos.ReservationRequest;
+import com.volcano.campsite.controllers.reservation.dtos.ReservationSuccessResponse;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Mono;

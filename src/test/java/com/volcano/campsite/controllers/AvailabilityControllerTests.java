@@ -1,6 +1,6 @@
-package com.upgrade.campsite.controllers;
+package com.volcano.campsite.controllers;
 
-import com.upgrade.campsite.util.DateUtil;
+import com.volcano.campsite.util.DateUtil;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

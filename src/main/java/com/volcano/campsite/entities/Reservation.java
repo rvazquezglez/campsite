@@ -1,4 +1,4 @@
-package com.upgrade.campsite.entities;
+package com.volcano.campsite.entities;
 
 import java.time.LocalDate;
 

@@ -1,4 +1,4 @@
-package com.upgrade.campsite.controllers.reservation.dtos;
+package com.volcano.campsite.controllers.reservation.dtos;
 
 public class ReservationSuccessResponse {
 	private String uniqueBookingIdentifier;

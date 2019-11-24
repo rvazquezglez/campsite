@@ -1,4 +1,4 @@
-package com.upgrade.campsite;
+package com.volcano.campsite;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

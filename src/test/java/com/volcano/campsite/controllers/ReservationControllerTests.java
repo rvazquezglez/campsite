@@ -1,7 +1,7 @@
-package com.upgrade.campsite.controllers;
+package com.volcano.campsite.controllers;
 
-import com.upgrade.campsite.controllers.reservation.dtos.ReservationRequest;
-import com.upgrade.campsite.util.DateUtil;
+import com.volcano.campsite.controllers.reservation.dtos.ReservationRequest;
+import com.volcano.campsite.util.DateUtil;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -20,7 +20,7 @@ import reactor.core.publisher.Mono;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 
-import static com.upgrade.campsite.util.DateUtil.DATE_TIME_FORMATTER;
+import static com.volcano.campsite.util.DateUtil.DATE_TIME_FORMATTER;
 import static org.springframework.restdocs.payload.PayloadDocumentation.*;
 import static org.springframework.restdocs.request.RequestDocumentation.*;
 import static org.springframework.restdocs.webtestclient.WebTestClientRestDocumentation.document;
@@ -199,7 +199,7 @@ class ReservationControllerTests {
 		newReservationRequest.setDepartureDate(LocalDate.parse("2019-11-21", inputFormatter));
 		newReservationRequest.setUserFirstName(userFirstName);
 		newReservationRequest.setUserLastName("Doe");
-		newReservationRequest.setUserEmail("jdoe@upgrade.com");
+		newReservationRequest.setUserEmail("jdoe@volcano.com");
 		return newReservationRequest;
 	}
 

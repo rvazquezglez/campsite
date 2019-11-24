@@ -1,4 +1,4 @@
-package com.upgrade.campsite.config;
+package com.volcano.campsite.config;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
