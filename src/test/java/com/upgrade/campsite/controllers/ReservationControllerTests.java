@@ -1,6 +1,7 @@
 package com.upgrade.campsite.controllers;
 
-import com.upgrade.campsite.controllers.dtos.ReservationRequest;
+import com.upgrade.campsite.controllers.reservation.dtos.ReservationRequest;
+import com.upgrade.campsite.util.DateUtil;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -19,20 +20,20 @@ import reactor.core.publisher.Mono;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 
+import static com.upgrade.campsite.util.DateUtil.DATE_TIME_FORMATTER;
 import static org.springframework.restdocs.payload.PayloadDocumentation.*;
-import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
-import static org.springframework.restdocs.request.RequestDocumentation.pathParameters;
+import static org.springframework.restdocs.request.RequestDocumentation.*;
 import static org.springframework.restdocs.webtestclient.WebTestClientRestDocumentation.document;
 import static org.springframework.restdocs.webtestclient.WebTestClientRestDocumentation.documentationConfiguration;
 
 @ExtendWith({RestDocumentationExtension.class, SpringExtension.class})
 @SpringBootTest
-public class ReservationControllerTests {
+class ReservationControllerTests {
 
 	private WebTestClient webTestClient;
 
 	@BeforeEach
-	public void setUp(
+	void setUp(
 		ApplicationContext applicationContext,
 		RestDocumentationContextProvider restDocumentation
 	) {
@@ -43,7 +44,7 @@ public class ReservationControllerTests {
 	}
 
 	@Test
-	public void successfulReservationTest() {
+	void successfulReservationTest() {
 		// GIVEN
 		ReservationRequest newReservationRequest = reservationRequestFor("John");
 
@@ -67,7 +68,7 @@ public class ReservationControllerTests {
 	}
 
 	@Test
-	public void errorReservationTest() {
+	void errorReservationTest() {
 		// GIVEN
 		ReservationRequest newReservationRequest = reservationRequestFor("James");
 
@@ -90,7 +91,7 @@ public class ReservationControllerTests {
 	}
 
 	@Test
-	public void successfulReservationCancellationTest() {
+	void successfulReservationCancellationTest() {
 		// GIVEN
 		String bookingId = "DEF456";
 
@@ -113,7 +114,7 @@ public class ReservationControllerTests {
 	}
 
 	@Test
-	public void errorReservationCancellationTest() {
+	void errorReservationCancellationTest() {
 		// GIVEN
 		String bookingId = "ABC123";
 
@@ -135,7 +136,7 @@ public class ReservationControllerTests {
 	}
 
 	@Test
-	public void successfulReservationUpdateTest() {
+	void successfulReservationUpdateTest() {
 		// GIVEN
 		ReservationRequest newReservationRequest = reservationRequestFor("John");
 		String bookingId = "DEF456";
@@ -161,7 +162,7 @@ public class ReservationControllerTests {
 	}
 
 	@Test
-	public void errorReservationUpdateTest() {
+	void errorReservationUpdateTest() {
 		// GIVEN
 		ReservationRequest newReservationRequest = reservationRequestFor("James");
 
@@ -191,11 +192,11 @@ public class ReservationControllerTests {
 	}
 
 	private ReservationRequest reservationRequestFor(String userFirstName) {
-		DateTimeFormatter inputFormatter = DateTimeFormatter.ofPattern("MM/dd/yyyy");
+		DateTimeFormatter inputFormatter = DATE_TIME_FORMATTER;
 		ReservationRequest newReservationRequest = new ReservationRequest();
 
-		newReservationRequest.setArrivalDate(LocalDate.parse("11/20/2019", inputFormatter));
-		newReservationRequest.setDepartureDate(LocalDate.parse("11/21/2019", inputFormatter));
+		newReservationRequest.setArrivalDate(LocalDate.parse("2019-11-20", inputFormatter));
+		newReservationRequest.setDepartureDate(LocalDate.parse("2019-11-21", inputFormatter));
 		newReservationRequest.setUserFirstName(userFirstName);
 		newReservationRequest.setUserLastName("Doe");
 		newReservationRequest.setUserEmail("jdoe@upgrade.com");
@@ -213,11 +214,14 @@ public class ReservationControllerTests {
 		return requestFields(
 			fieldWithPath("arrivalDate").description(
 				"The date that user is expected to come to the volcano. It needs to be at least 1 day after"
-					+ " the booking date and up to 1 month after it. Expected format is \"dd/MM/yyyy\"."
+					+ " the booking date and up to 1 month after it. Expected format is \""
+					+ DateUtil.DATE_PATTERN
+					+ "\"."
 			),
 			fieldWithPath("departureDate").description(
 				"The date that user is expected to leave the volcano. It can max 3 days after arrival. "
-					+ "Expected format is \"dd/MM/yyyy\"."
+					+ "Expected format is \""
+					+ DateUtil.DATE_PATTERN + "\"."
 			),
 			fieldWithPath("userEmail").description("The user's email. It needs to be a valid email."),
 			fieldWithPath("userFirstName").description("The user's first name."),

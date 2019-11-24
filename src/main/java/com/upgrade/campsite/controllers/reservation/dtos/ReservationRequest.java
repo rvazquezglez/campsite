@@ -1,6 +1,7 @@
-package com.upgrade.campsite.controllers.dtos;
+package com.upgrade.campsite.controllers.reservation.dtos;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.upgrade.campsite.util.DateUtil;
 
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotEmpty;
@@ -10,11 +11,11 @@ import java.time.LocalDate;
 
 public class ReservationRequest {
 	@NotNull(message = "Arrival date should not be null")
-	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd/MM/yyyy")
+	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = DateUtil.DATE_PATTERN)
 	private LocalDate arrivalDate;
 
 	@NotNull(message = "Departure date should not be null")
-	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd/MM/yyyy")
+	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = DateUtil.DATE_PATTERN)
 	private LocalDate departureDate;
 
 	@Email(message = "Email should be valid")

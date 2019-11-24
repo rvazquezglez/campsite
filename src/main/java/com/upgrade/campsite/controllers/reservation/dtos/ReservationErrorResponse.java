@@ -1,4 +1,4 @@
-package com.upgrade.campsite.controllers.dtos;
+package com.upgrade.campsite.controllers.reservation.dtos;
 
 public class ReservationErrorResponse {
 	private String error;
