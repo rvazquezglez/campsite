@@ -39,7 +39,7 @@ public class AvailabilityController {
 			+ DATE_TIME_FORMATTER.format(arrivalDate)
 			+ " to "
 			+ DATE_TIME_FORMATTER.format(departureDate)
-			+ " ."
+			+ "."
 		);
 		response.setNotAvailableDates(Arrays.asList(
 			new AvailabilitySuccessResponse.DateRange(LocalDate.of(2019, 11, 25), LocalDate.of(2019, 11, 26)),
