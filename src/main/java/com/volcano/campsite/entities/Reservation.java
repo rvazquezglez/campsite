@@ -1,25 +1,36 @@
 package com.volcano.campsite.entities;
 
+import org.springframework.data.annotation.Id;
+import org.springframework.data.relational.core.mapping.Column;
+
 import java.time.LocalDate;
 
 public class Reservation {
-	private String uniqueBookingIdentifier;
 
+	@Id
+	@Column("ubi")
+	private Integer uniqueBookingIdentifier;
+
+	@Column("arrival_date")
 	private LocalDate arrivalDate;
 
+	@Column("departure_date")
 	private LocalDate departureDate;
 
+	@Column("email")
 	private String userEmail;
 
+	@Column("first_name")
 	private String userFirstName;
 
+	@Column("last_name")
 	private String userLastName;
 
-	public String getUniqueBookingIdentifier() {
+	public Integer getUniqueBookingIdentifier() {
 		return uniqueBookingIdentifier;
 	}
 
-	public void setUniqueBookingIdentifier(String uniqueBookingIdentifier) {
+	public void setUniqueBookingIdentifier(Integer uniqueBookingIdentifier) {
 		this.uniqueBookingIdentifier = uniqueBookingIdentifier;
 	}
 

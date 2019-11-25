@@ -23,7 +23,7 @@ dependencies {
 	implementation 'org.springframework.boot.experimental:spring-boot-starter-data-r2dbc'
 	implementation 'org.springframework.boot:spring-boot-starter-webflux'
 	implementation 'org.flywaydb:flyway-core'
-	runtimeOnly 'com.h2database:h2'
+	runtimeOnly 'com.h2database:h2:1.4.199'
 	runtimeOnly 'io.r2dbc:r2dbc-h2'
 	testImplementation('org.springframework.boot:spring-boot-starter-test') {
 		exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
@@ -31,6 +31,8 @@ dependencies {
 	testImplementation 'org.springframework.boot.experimental:spring-boot-test-autoconfigure-r2dbc'
 	testImplementation 'io.projectreactor:reactor-test'
 	testImplementation 'org.springframework.restdocs:spring-restdocs-webtestclient'
+	testImplementation 'org.flywaydb.flyway-test-extensions:flyway-spring-test:6.0.0'
+	testImplementation 'org.assertj:assertj-core:3.14.0'
 }
 
 dependencyManagement {

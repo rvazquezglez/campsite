@@ -13,7 +13,7 @@ import static java.time.temporal.ChronoUnit.DAYS;
 import static java.time.temporal.ChronoUnit.MONTHS;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-class ReservationServiceTest {
+class ReservationServiceTests {
 
 	@BeforeEach
 	void setUp() {

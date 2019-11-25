@@ -22,7 +22,7 @@ public class ReservationService {
 		}
 
 		long selectedDays = DAYS.between(reservation.getArrivalDate(), reservation.getDepartureDate());
-		if (selectedDays >= 3) {
+		if (selectedDays > 3) {
 			throw new ReservationOutOfRangeException("The campsite can be reserved for max 3 days. "
 				+ selectedDays
 				+ " days selected.");
