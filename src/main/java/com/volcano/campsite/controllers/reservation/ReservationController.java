@@ -3,8 +3,7 @@ package com.volcano.campsite.controllers.reservation;
 import com.volcano.campsite.controllers.reservation.dtos.ReservationErrorResponse;
 import com.volcano.campsite.controllers.reservation.dtos.ReservationRequest;
 import com.volcano.campsite.controllers.reservation.dtos.ReservationSuccessResponse;
-import com.volcano.campsite.services.ReservationService;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.volcano.campsite.services.BookingService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Mono;
@@ -15,9 +14,9 @@ import javax.validation.Valid;
 @RequestMapping("/reservations")
 public class ReservationController {
 
-	private final ReservationService reservationService;
+	private final BookingService reservationService;
 
-	public ReservationController(ReservationService reservationService) {
+	public ReservationController(BookingService reservationService) {
 		this.reservationService = reservationService;
 	}
 

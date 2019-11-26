@@ -29,7 +29,6 @@ class ReservationRepositoryTests {
 	@Autowired
 	ReservationRepository reservationRepository;
 
-	@FlywayTest
 	@Test
 	void testRunsTestMigration() {
 		assertThat(

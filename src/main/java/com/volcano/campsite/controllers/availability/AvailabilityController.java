@@ -1,7 +1,9 @@
 package com.volcano.campsite.controllers.availability;
 
 import com.volcano.campsite.controllers.availability.dtos.AvailabilitySuccessResponse;
+import com.volcano.campsite.services.AvailabilityService;
 import com.volcano.campsite.util.DateUtil;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -20,6 +22,12 @@ import static com.volcano.campsite.util.DateUtil.DATE_TIME_FORMATTER;
 @RestController
 @RequestMapping("/availability")
 public class AvailabilityController {
+
+	private final AvailabilityService availabilityService;
+
+	public AvailabilityController(AvailabilityService availabilityService) {
+		this.availabilityService = availabilityService;
+	}
 
 	@SuppressWarnings("OptionalUsedAsFieldOrParameterType")
 	@GetMapping

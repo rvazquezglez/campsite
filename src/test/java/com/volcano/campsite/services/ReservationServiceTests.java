@@ -36,15 +36,15 @@ class ReservationServiceTests {
 		LocalDate departureDate = arrivalDate.plus(2, DAYS);
 		reservation.setDepartureDate(departureDate);
 
-		ReservationRepository repository = mock(ReservationRepository.class);
+		ReservationService reservationService = mock(ReservationService.class);
 
-		when(repository.findByDateRange(any(), any())).thenReturn(Flux.empty());
+		when(reservationService.findByDateRange(any(), any())).thenReturn(Flux.empty());
 		Reservation saved = new Reservation();
 		saved.setUniqueBookingIdentifier(12);
-		when(repository.save(any())).thenReturn(Mono.just(saved));
+		when(reservationService.save(any())).thenReturn(Mono.just(saved));
 
 		// WHEN trying to reserve
-		Mono<Reservation> reservationMono = new ReservationService(repository).book(reservation);
+		Mono<Reservation> reservationMono = new BookingService(reservationService).book(reservation);
 
 		// THEN save reservation is called
 		StepVerifier.create(reservationMono)
@@ -55,7 +55,7 @@ class ReservationServiceTests {
 			.expectComplete()
 			.verify();
 
-		verify(repository, times(1)).save(any());
+		verify(reservationService, times(1)).save(any());
 	}
 
 	@Test
@@ -67,15 +67,15 @@ class ReservationServiceTests {
 		LocalDate departureDate = arrivalDate.plus(2, DAYS);
 		reservation.setDepartureDate(departureDate);
 
-		ReservationRepository repository = mock(ReservationRepository.class);
+		ReservationService reservationService = mock(ReservationService.class);
 		Reservation existingReservation = new Reservation();
 		existingReservation.setArrivalDate(arrivalDate);
 		existingReservation.setDepartureDate(departureDate);
 
-		when(repository.findByDateRange(any(), any())).thenReturn(Flux.just(existingReservation));
+		when(reservationService.findByDateRange(any(), any())).thenReturn(Flux.just(existingReservation));
 
 		// WHEN trying to reserve
-		Mono<Reservation> reservationMono = new ReservationService(repository).book(reservation);
+		Mono<Reservation> reservationMono = new BookingService(reservationService).book(reservation);
 
 		// THEN error expected
 		StepVerifier.create(reservationMono)
@@ -96,7 +96,7 @@ class ReservationServiceTests {
 		reservation.setDepartureDate(arrivalDate.plus(5, DAYS));
 
 		// WHEN trying to reserve
-		Mono<Reservation> reservationMono = new ReservationService(null).book(reservation);
+		Mono<Reservation> reservationMono = new BookingService(null).book(reservation);
 
 		// THEN
 		StepVerifier.create(reservationMono)
@@ -117,7 +117,7 @@ class ReservationServiceTests {
 		reservation.setDepartureDate(arrivalDate.plus(2, DAYS));
 
 		// WHEN trying to reserve
-		Mono<Reservation> reservationMono = new ReservationService(null).book(reservation);
+		Mono<Reservation> reservationMono = new BookingService(null).book(reservation);
 
 		// THEN
 		StepVerifier.create(reservationMono)
@@ -139,7 +139,7 @@ class ReservationServiceTests {
 		reservation.setDepartureDate(arrivalDate.plus(2, DAYS));
 
 		// WHEN trying to reserve
-		Mono<Reservation> reservationMono = new ReservationService(null).book(reservation);
+		Mono<Reservation> reservationMono = new BookingService(null).book(reservation);
 
 		// THEN
 		StepVerifier.create(reservationMono)

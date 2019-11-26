@@ -1,2 +1,4 @@
 #logging.level.org.springframework.web: TRACE
+#logging.level.org.springframework.cache: TRACE
+
 spring.h2.console.enabled: true
