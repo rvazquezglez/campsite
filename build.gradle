@@ -33,6 +33,7 @@ dependencies {
 	testImplementation 'org.springframework.restdocs:spring-restdocs-webtestclient'
 	testImplementation 'org.flywaydb.flyway-test-extensions:flyway-spring-test:6.0.0'
 	testImplementation 'org.assertj:assertj-core:3.14.0'
+	testImplementation 'org.mockito:mockito-all:1.10.19'
 }
 
 dependencyManagement {

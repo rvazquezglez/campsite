@@ -1,6 +1,7 @@
 package com.volcano.campsite.controllers.reservation.dtos;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.volcano.campsite.entities.Reservation;
 import com.volcano.campsite.util.DateUtil;
 
 import javax.validation.constraints.Email;
@@ -65,5 +66,16 @@ public class ReservationRequest {
 
 	public void setUserLastName(String userLastName) {
 		this.userLastName = userLastName;
+	}
+
+	public Reservation toReservation() {
+		Reservation reservation = new Reservation();
+		reservation.setArrivalDate(arrivalDate);
+		reservation.setDepartureDate(departureDate);
+		reservation.setUserEmail(userEmail);
+		reservation.setUserFirstName(userFirstName);
+		reservation.setUserLastName(userLastName);
+
+		return reservation;
 	}
 }

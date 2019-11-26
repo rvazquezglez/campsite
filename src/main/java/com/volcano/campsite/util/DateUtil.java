@@ -1,5 +1,6 @@
 package com.volcano.campsite.util;
 
+import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 
 public class DateUtil {
@@ -8,5 +9,9 @@ public class DateUtil {
 
 	static {
 		DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern(DATE_PATTERN);
+	}
+
+	public static String format(LocalDate date) {
+		return DATE_TIME_FORMATTER.format(date);
 	}
 }
