@@ -2,7 +2,6 @@ package com.volcano.campsite.services;
 
 import com.volcano.campsite.controllers.reservation.dtos.ReservationRequest;
 import com.volcano.campsite.entities.Reservation;
-import com.volcano.campsite.repositories.ReservationRepository;
 import com.volcano.campsite.util.DateUtil;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -22,7 +21,7 @@ public class BookingService {
 		this.reservationService = reservationService;
 	}
 
-	@Transactional
+	@Transactional("transactionManager")
 	public Mono<Reservation> book(ReservationRequest reservationRequest) {
 		if (LocalDate.now().compareTo(reservationRequest.getArrivalDate()) >= 0) {
 			return Mono.error(
@@ -56,18 +55,29 @@ public class BookingService {
 		return reservationService
 			.findByDateRange(reservationRequest.getArrivalDate(), reservationRequest.getDepartureDate())
 			.singleOrEmpty()
-			.<Reservation>flatMap(reservation -> Mono.error(new ReservationOutOfRangeException(
-				"Date range from "
-					+ DateUtil.format(reservation.getArrivalDate())
-					+ " to "
-					+ DateUtil.format(reservation.getDepartureDate())
-					+ " already booked."
-			)))
+			.<Reservation>flatMap(reservation ->
+				Mono.error(new ReservationOutOfRangeException(
+					"Date range from "
+						+ DateUtil.format(reservation.getArrivalDate())
+						+ " to "
+						+ DateUtil.format(reservation.getDepartureDate())
+						+ " already booked."
+
+				))
+			)
 			.switchIfEmpty(
 				Mono.defer(
 					() -> reservationService.save(reservationRequest.toReservation())
 				)
 			);
 
+	}
+
+	public Mono<Reservation> cancel(Integer bookingId) {
+		return null; // TODO: not implemented yet
+	}
+
+	public Mono<Reservation> update(Integer bookingId, ReservationRequest reservationRequest) {
+		return null; // TODO: not implemented yet
 	}
 }

@@ -16,19 +16,23 @@ public interface ReservationRepository extends ReactiveCrudRepository<Reservatio
 	@Query(
 		"SELECT * FROM reservations "
 			+ "WHERE ("
-			+ "arrival_date >= :arrivalDate "
-			+ "AND "
-			+ "arrival_date < :departureDate"
-			+ ") "
-			+ "OR ( "
-			+ "departure_date > :arrivalDate "
-			+ "AND "
-			+ "departure_date <= :departureDate"
+			+ "  ("
+			+ "    arrival_date >= :arrivalDate "
+			+ "    AND "
+			+ "    arrival_date < :departureDate"
+			+ "  ) "
+			+ "  OR ( "
+			+ "    departure_date > :arrivalDate "
+			+ "    AND "
+			+ "    departure_date <= :departureDate"
+			+ "  )"
+			+ "  OR ( "
+			+ "    arrival_date <= :arrivalDate "
+			+ "    AND "
+			+ "    departure_date >= :departureDate"
+			+ "  )"
 			+ ")"
-			+ "OR ( "
-			+ "arrival_date <= :arrivalDate "
-			+ "AND "
-			+ "departure_date >= :departureDate"
-			+ ")")
-	Flux<Reservation> findByDateRange(LocalDate arrivalDate, LocalDate departureDate);
+			+ "AND status = :status") // SpEL expressions seems not yet supported by r2dbc, otherwise status parameter
+		 							  // would be enum and the part of the query would be like `:#{status.code}`
+	Flux<Reservation> findActiveByDateRange(Integer status, LocalDate arrivalDate, LocalDate departureDate);
 }

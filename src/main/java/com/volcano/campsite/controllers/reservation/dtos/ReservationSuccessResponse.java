@@ -1,14 +1,14 @@
 package com.volcano.campsite.controllers.reservation.dtos;
 
 public class ReservationSuccessResponse {
-	private String uniqueBookingIdentifier;
+	private Integer uniqueBookingIdentifier;
 	private String message;
 
-	public String getUniqueBookingIdentifier() {
+	public Integer getUniqueBookingIdentifier() {
 		return uniqueBookingIdentifier;
 	}
 
-	public void setUniqueBookingIdentifier(String uniqueBookingIdentifier) {
+	public void setUniqueBookingIdentifier(Integer uniqueBookingIdentifier) {
 		this.uniqueBookingIdentifier = uniqueBookingIdentifier;
 	}
 

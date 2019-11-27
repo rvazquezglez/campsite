@@ -21,53 +21,73 @@ public class ReservationController {
 	}
 
 	@PostMapping
-	public Mono<ResponseEntity<?>> book(@Valid @RequestBody ReservationRequest reservation) {
-		if (reservation.getUserFirstName().equalsIgnoreCase("James")) {
-			ReservationErrorResponse reservationErrorResponse = new ReservationErrorResponse();
-			reservationErrorResponse.setError("No Availability");
-			reservationErrorResponse.setErrorDescription("11/21/2019 is already booked");
+	public Mono<ResponseEntity<?>> book(@Valid @RequestBody ReservationRequest reservationRequest) {
+		return reservationService.book(reservationRequest)
+			.<ResponseEntity<?>>flatMap(reservation -> {
+				ReservationSuccessResponse response = new ReservationSuccessResponse();
+				Integer bookingId = reservation.getUniqueBookingIdentifier();
+				response.setUniqueBookingIdentifier(bookingId);
+				response.setMessage("Reservation " + bookingId + " successfully created.");
 
-			return Mono.just(ResponseEntity.status(500).body(reservationErrorResponse));
-		}
-
-		ReservationSuccessResponse response = new ReservationSuccessResponse();
-		response.setUniqueBookingIdentifier("uniqueBookingIdentifier");
-		return Mono.just(ResponseEntity.ok(response));
+				return Mono.just(ResponseEntity.ok(response));
+			})
+			.onErrorResume(throwable ->
+				Mono.just(ResponseEntity.status(500).body(
+					getReservationErrorResponse(
+						"Not booked",
+						"Could not create booking. " + throwable.getMessage()
+					))
+				)
+			);
 	}
 
 	@DeleteMapping(path = "/{bookingId}")
-	public Mono<ResponseEntity<?>> cancelBooking(@PathVariable String bookingId) {
-		if (bookingId.equalsIgnoreCase("ABC123")) {
-			ReservationErrorResponse reservationErrorResponse = new ReservationErrorResponse();
-			reservationErrorResponse.setError("ErrorCancellation");
-			reservationErrorResponse.setErrorDescription("Reservation " + bookingId+" could not be cancelled.");
-
-			return Mono.just(ResponseEntity.status(500).body(reservationErrorResponse));
-		}
-
-		ReservationSuccessResponse response = new ReservationSuccessResponse();
-		response.setUniqueBookingIdentifier(bookingId);
-		response.setMessage("Reservation " + bookingId + " successfully cancelled.");
-		return Mono.just(ResponseEntity.ok(response));
+	public Mono<ResponseEntity<?>> cancelBooking(@PathVariable Integer bookingId) {
+		return reservationService.cancel(bookingId)
+			.<ResponseEntity<?>>flatMap(reservation -> {
+				ReservationSuccessResponse response = new ReservationSuccessResponse();
+				response.setUniqueBookingIdentifier(bookingId);
+				response.setMessage("Reservation " + bookingId + " successfully cancelled.");
+				return Mono.just(ResponseEntity.ok(response));
+			})
+			.onErrorResume(throwable ->
+				Mono.just(ResponseEntity.status(500).body(
+					getReservationErrorResponse(
+						"Not cancelled",
+						"Reservation " + bookingId + " could not be cancelled. "
+							+ throwable.getMessage()
+					))
+				)
+			);
 	}
 
 	@PutMapping(path = "/{bookingId}")
 	public Mono<ResponseEntity<?>> updateBooking(
-		@PathVariable String bookingId,
-		@Valid @RequestBody ReservationRequest reservation
+		@PathVariable Integer bookingId,
+		@Valid @RequestBody ReservationRequest reservationRequest
 	) {
-		if (bookingId.equalsIgnoreCase("ABC123")) {
-			ReservationErrorResponse reservationErrorResponse = new ReservationErrorResponse();
-			reservationErrorResponse.setError("No Availability");
-			reservationErrorResponse.setErrorDescription("11/21/2019 is already booked");
+		return reservationService.update(bookingId, reservationRequest)
+			.<ResponseEntity<?>>flatMap(reservation -> {
+				ReservationSuccessResponse response = new ReservationSuccessResponse();
+				response.setUniqueBookingIdentifier(reservation.getUniqueBookingIdentifier());
+				response.setMessage("Reservation " + bookingId + " successfully updated.");
+				return Mono.just(ResponseEntity.ok(response));
+			})
+			.onErrorResume(throwable ->
+				Mono.just(ResponseEntity.status(500).body(
+					getReservationErrorResponse(
+						"Not updated",
+						throwable.getMessage()
+					))
+				)
+			);
+	}
 
-			return Mono.just(ResponseEntity.status(500).body(reservationErrorResponse));
-		}
-
-		ReservationSuccessResponse response = new ReservationSuccessResponse();
-		response.setUniqueBookingIdentifier(bookingId);
-		response.setMessage("Reservation " + bookingId + " successfully updated.");
-		return Mono.just(ResponseEntity.ok(response));
+	private ReservationErrorResponse getReservationErrorResponse(String error, String errorDescription) {
+		ReservationErrorResponse reservationErrorResponse = new ReservationErrorResponse();
+		reservationErrorResponse.setError(error);
+		reservationErrorResponse.setErrorDescription(errorDescription);
+		return reservationErrorResponse;
 	}
 
 }

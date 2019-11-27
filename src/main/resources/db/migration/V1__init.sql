@@ -5,5 +5,6 @@ CREATE TABLE reservations (
     email VARCHAR(50),
     first_name VARCHAR(255),
     last_name VARCHAR(255),
+    status INT,
     PRIMARY KEY (ubi)
 );

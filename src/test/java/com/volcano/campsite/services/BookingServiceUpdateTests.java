@@ -2,9 +2,7 @@ package com.volcano.campsite.services;
 
 import com.volcano.campsite.controllers.reservation.dtos.ReservationRequest;
 import com.volcano.campsite.entities.Reservation;
-import com.volcano.campsite.repositories.ReservationRepository;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
+import com.volcano.campsite.util.DateUtil;
 import org.junit.jupiter.api.Test;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -14,18 +12,10 @@ import java.time.LocalDate;
 
 import static java.time.temporal.ChronoUnit.DAYS;
 import static java.time.temporal.ChronoUnit.MONTHS;
-import static org.mockito.Matchers.any;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
-class ReservationServiceTests {
-
-	@BeforeEach
-	void setUp() {
-	}
-
-	@AfterEach
-	void tearDown() {
-	}
+class BookingServiceUpdateTests {
 
 	@Test
 	void bookTest() {
@@ -44,7 +34,7 @@ class ReservationServiceTests {
 		when(reservationService.save(any())).thenReturn(Mono.just(saved));
 
 		// WHEN trying to reserve
-		Mono<Reservation> reservationMono = new BookingService(reservationService).book(reservation);
+		Mono<Reservation> reservationMono = new BookingService(reservationService).update(123, reservation);
 
 		// THEN save reservation is called
 		StepVerifier.create(reservationMono)
@@ -75,13 +65,17 @@ class ReservationServiceTests {
 		when(reservationService.findByDateRange(any(), any())).thenReturn(Flux.just(existingReservation));
 
 		// WHEN trying to reserve
-		Mono<Reservation> reservationMono = new BookingService(reservationService).book(reservation);
+		Mono<Reservation> reservationMono = new BookingService(reservationService).update(123, reservation);
 
 		// THEN error expected
 		StepVerifier.create(reservationMono)
 			.expectErrorMatches(
 				throwable ->
-					"Date range from 2019-11-26 to 2019-11-28 already booked."
+					("Date range from "
+						+ DateUtil.format(arrivalDate)
+						+ " to "
+						+ DateUtil.format(departureDate)
+						+ " already booked.")
 						.equals(throwable.getMessage())
 			)
 			.verify();
@@ -96,7 +90,7 @@ class ReservationServiceTests {
 		reservation.setDepartureDate(arrivalDate.plus(5, DAYS));
 
 		// WHEN trying to reserve
-		Mono<Reservation> reservationMono = new BookingService(null).book(reservation);
+		Mono<Reservation> reservationMono = new BookingService(null).update(123, reservation);
 
 		// THEN
 		StepVerifier.create(reservationMono)
@@ -117,7 +111,7 @@ class ReservationServiceTests {
 		reservation.setDepartureDate(arrivalDate.plus(2, DAYS));
 
 		// WHEN trying to reserve
-		Mono<Reservation> reservationMono = new BookingService(null).book(reservation);
+		Mono<Reservation> reservationMono = new BookingService(null).update(123, reservation);
 
 		// THEN
 		StepVerifier.create(reservationMono)
@@ -139,7 +133,7 @@ class ReservationServiceTests {
 		reservation.setDepartureDate(arrivalDate.plus(2, DAYS));
 
 		// WHEN trying to reserve
-		Mono<Reservation> reservationMono = new BookingService(null).book(reservation);
+		Mono<Reservation> reservationMono = new BookingService(null).update(123, reservation);
 
 		// THEN
 		StepVerifier.create(reservationMono)

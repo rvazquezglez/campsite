@@ -12,9 +12,11 @@ import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.TestExecutionListeners;
 import org.springframework.test.context.support.DependencyInjectionTestExecutionListener;
 import reactor.core.publisher.Flux;
+import reactor.test.StepVerifier;
 
 import java.time.LocalDate;
 
+import static com.volcano.campsite.entities.Reservation.Status.ACTIVE;
 import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
 
 @SpringBootTest(classes = CampsiteApplication.class)
@@ -50,12 +52,35 @@ class ReservationRepositoryTests {
 	}
 
 	@Test
+	void testSave() {
+		Reservation gentleBen = new Reservation();
+		gentleBen.setUserEmail("gben@volcano.com");
+		gentleBen.setUserFirstName("Gentle");
+		gentleBen.setUserLastName("Ben");
+		gentleBen.setArrivalDate(LocalDate.of(2019, 11, 24));
+		gentleBen.setDepartureDate(LocalDate.of(2019, 11, 26));
+		gentleBen.setStatus(ACTIVE);
+
+		reservationRepository.save(gentleBen).block();
+
+		StepVerifier.create(reservationRepository.findByEmail("gben@volcano.com"))
+			.expectNextMatches(newReservation ->
+				newReservation.getStatus() == ACTIVE
+					&& "Gentle".equals(newReservation.getUserFirstName())
+					&& "Ben".equals(newReservation.getUserLastName())
+			)
+			.expectComplete()
+			.verify();
+
+	}
+
+	@Test
 	void testFindByDateRangeOverlappingArrival() {
 		// Reservation done from "2019-12-05" to "2019-12-08"
 		LocalDate from = LocalDate.of(2019, 12, 4);
 		LocalDate to = LocalDate.of(2019, 12, 6);
 
-		Reservation found = findReservationByDateRange(from, to);
+		Reservation found = findActiveReservationByDateRange(from, to);
 
 		assertFound(found);
 	}
@@ -66,7 +91,7 @@ class ReservationRepositoryTests {
 		LocalDate from = LocalDate.of(2019, 12, 7);
 		LocalDate to = LocalDate.of(2019, 12, 9);
 
-		Reservation found = findReservationByDateRange(from, to);
+		Reservation found = findActiveReservationByDateRange(from, to);
 
 		assertFound(found);
 	}
@@ -77,7 +102,7 @@ class ReservationRepositoryTests {
 		LocalDate from = LocalDate.of(2019, 12, 6);
 		LocalDate to = LocalDate.of(2019, 12, 7);
 
-		Reservation found = findReservationByDateRange(from, to);
+		Reservation found = findActiveReservationByDateRange(from, to);
 
 		assertFound(found);
 	}
@@ -88,7 +113,7 @@ class ReservationRepositoryTests {
 		LocalDate from = LocalDate.of(2019, 12, 4);
 		LocalDate to = LocalDate.of(2019, 12, 5);
 
-		Reservation found = findReservationByDateRange(from, to);
+		Reservation found = findActiveReservationByDateRange(from, to);
 
 		assertThat(found).isNull();
 	}
@@ -99,7 +124,7 @@ class ReservationRepositoryTests {
 		LocalDate from = LocalDate.of(2019, 12, 8);
 		LocalDate to = LocalDate.of(2019, 12, 9);
 
-		Reservation found = findReservationByDateRange(from, to);
+		Reservation found = findActiveReservationByDateRange(from, to);
 
 		assertThat(found).isNull();
 	}
@@ -112,8 +137,8 @@ class ReservationRepositoryTests {
 		assertThat(found.getDepartureDate()).isEqualTo(LocalDate.of(2019, 12, 8));
 	}
 
-	private Reservation findReservationByDateRange(LocalDate from, LocalDate to) {
-		Flux<Reservation> reservation = reservationRepository.findByDateRange(from, to);
+	private Reservation findActiveReservationByDateRange(LocalDate from, LocalDate to) {
+		Flux<Reservation> reservation = reservationRepository.findActiveByDateRange(ACTIVE.getCode(), from, to);
 		return reservation.next().block();
 	}
 }

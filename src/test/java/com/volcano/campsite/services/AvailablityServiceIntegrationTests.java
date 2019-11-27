@@ -18,6 +18,8 @@ import org.springframework.test.context.support.DependencyInjectionTestExecution
 import java.time.LocalDate;
 import java.util.List;
 
+import static com.volcano.campsite.entities.Reservation.Status.ACTIVE;
+
 
 @SpringBootTest(classes = CampsiteApplication.class)
 @Rollback
@@ -46,6 +48,7 @@ class AvailablityServiceIntegrationTests {
 		john.setUserFirstName("John");
 		john.setUserLastName("Doe");
 		john.setUserEmail("jdoe@volcano.com");
+		john.setStatus(ACTIVE);
 
 		reservationRepository.save(john).block();
 
@@ -101,6 +104,7 @@ class AvailablityServiceIntegrationTests {
 		jenny.setUserFirstName("Jenny");
 		jenny.setUserLastName("Daniels");
 		jenny.setUserEmail("jdaniels@volcano.com");
+		jenny.setStatus(ACTIVE);
 
 		reservationService.save(jenny).block();
 

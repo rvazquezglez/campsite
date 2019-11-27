@@ -5,6 +5,10 @@ import org.springframework.data.relational.core.mapping.Column;
 import org.springframework.data.relational.core.mapping.Table;
 
 import java.time.LocalDate;
+import java.util.Arrays;
+import java.util.Map;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 @Table("reservations")
 public class Reservation {
@@ -27,6 +31,9 @@ public class Reservation {
 
 	@Column("last_name")
 	private String userLastName;
+
+	@Column("status")
+	private Status status;
 
 	public Integer getUniqueBookingIdentifier() {
 		return uniqueBookingIdentifier;
@@ -74,5 +81,40 @@ public class Reservation {
 
 	public void setUserLastName(String userLastName) {
 		this.userLastName = userLastName;
+	}
+
+	public Status getStatus() {
+		return status;
+	}
+
+	public void setStatus(Status status) {
+		this.status = status;
+	}
+
+	public enum Status {
+		UNKNOWN(0),
+		ACTIVE(1),
+		CANCELLED(2);
+
+		private static Map<Integer, Status> statusMap;
+
+		static {
+			statusMap = Arrays.stream(Status.values())
+				.collect(Collectors.toMap(Status::getCode, Function.identity()));
+		}
+
+		Status(int statusCode) {
+			this.code = statusCode;
+		}
+
+		private final int code;
+
+		public int getCode() {
+			return code;
+		}
+
+		public static Status fromCode(int statusCode) {
+			return statusMap.getOrDefault(statusCode, UNKNOWN);
+		}
 	}
 }

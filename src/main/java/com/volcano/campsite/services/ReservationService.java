@@ -10,6 +10,7 @@ import reactor.core.publisher.Mono;
 import java.time.LocalDate;
 
 import static com.volcano.campsite.config.CacheConfiguration.RESERVATIONS_CACHE;
+import static com.volcano.campsite.entities.Reservation.Status.ACTIVE;
 
 @Service
 public class ReservationService {
@@ -19,9 +20,9 @@ public class ReservationService {
 		this.reservationRepository = reservationRepository;
 	}
 
-	// Not cached, for cached version use availability service
+	// Not cached, for cached version use AvailabilityService
 	public Flux<Reservation> findByDateRange(LocalDate arrivalDate, LocalDate departureDate) {
-		return reservationRepository.findByDateRange(arrivalDate, departureDate);
+		return reservationRepository.findActiveByDateRange(ACTIVE.getCode(), arrivalDate, departureDate);
 	}
 
 	@CacheEvict(
