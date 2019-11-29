@@ -44,12 +44,12 @@ public class ReservationController {
 	@DeleteMapping(path = "/{bookingId}")
 	public Mono<ResponseEntity<?>> cancelBooking(@PathVariable Integer bookingId) {
 		return reservationService.cancel(bookingId)
-			.<ResponseEntity<?>>flatMap(reservation -> {
+			.<ResponseEntity<?>>then(Mono.defer(() -> {
 				ReservationSuccessResponse response = new ReservationSuccessResponse();
 				response.setUniqueBookingIdentifier(bookingId);
 				response.setMessage("Reservation " + bookingId + " successfully cancelled.");
 				return Mono.just(ResponseEntity.ok(response));
-			})
+			}))
 			.onErrorResume(throwable ->
 				Mono.just(ResponseEntity.status(500).body(
 					getReservationErrorResponse(
@@ -70,7 +70,10 @@ public class ReservationController {
 			.<ResponseEntity<?>>flatMap(reservation -> {
 				ReservationSuccessResponse response = new ReservationSuccessResponse();
 				response.setUniqueBookingIdentifier(reservation.getUniqueBookingIdentifier());
-				response.setMessage("Reservation " + bookingId + " successfully updated.");
+				response.setMessage(
+					"Reservation successfully updated. New booking identifier is: "
+						+ reservation.getUniqueBookingIdentifier()
+				);
 				return Mono.just(ResponseEntity.ok(response));
 			})
 			.onErrorResume(throwable ->

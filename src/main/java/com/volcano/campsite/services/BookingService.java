@@ -23,6 +23,32 @@ public class BookingService {
 
 	@Transactional("transactionManager")
 	public Mono<Reservation> book(ReservationRequest reservationRequest) {
+		Mono<Reservation> errorOrEmpty = performValidations(reservationRequest);
+		return errorOrEmpty.switchIfEmpty(
+			Mono.defer(
+				() -> reservationService.save(reservationRequest.toReservation())
+			)
+		);
+	}
+
+	@Transactional("transactionManager")
+	public Mono<Void> cancel(Integer bookingId) {
+		return reservationService.cancel(bookingId);
+	}
+
+
+	@Transactional("transactionManager")
+	public Mono<Reservation> update(Integer bookingId, ReservationRequest reservationRequest) {
+		return reservationService.cancel(bookingId)
+			.then(performValidations(reservationRequest)
+				.switchIfEmpty(
+					Mono.defer(
+						() -> reservationService.save(reservationRequest.toReservation())
+					)
+				));
+	}
+
+	private Mono<Reservation> performValidations(ReservationRequest reservationRequest) {
 		if (LocalDate.now().compareTo(reservationRequest.getArrivalDate()) >= 0) {
 			return Mono.error(
 				new ReservationOutOfRangeException(
@@ -64,20 +90,6 @@ public class BookingService {
 						+ " already booked."
 
 				))
-			)
-			.switchIfEmpty(
-				Mono.defer(
-					() -> reservationService.save(reservationRequest.toReservation())
-				)
 			);
-
-	}
-
-	public Mono<Reservation> cancel(Integer bookingId) {
-		return null; // TODO: not implemented yet
-	}
-
-	public Mono<Reservation> update(Integer bookingId, ReservationRequest reservationRequest) {
-		return null; // TODO: not implemented yet
 	}
 }

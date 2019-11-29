@@ -12,11 +12,13 @@ import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.TestExecutionListeners;
 import org.springframework.test.context.support.DependencyInjectionTestExecutionListener;
 import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 import reactor.test.StepVerifier;
 
 import java.time.LocalDate;
 
 import static com.volcano.campsite.entities.Reservation.Status.ACTIVE;
+import static com.volcano.campsite.entities.Reservation.Status.CANCELLED;
 import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
 
 @SpringBootTest(classes = CampsiteApplication.class)
@@ -127,6 +129,35 @@ class ReservationRepositoryTests {
 		Reservation found = findActiveReservationByDateRange(from, to);
 
 		assertThat(found).isNull();
+	}
+
+	@Test
+	void testUpdateStatus() {
+		// GIVEN an existing reservation
+		Reservation johnSnow = new Reservation();
+		johnSnow.setUserEmail("jsnow@volcano.com");
+		johnSnow.setUserFirstName("John");
+		johnSnow.setUserLastName("Snow");
+		johnSnow.setArrivalDate(LocalDate.of(2019, 11, 24));
+		johnSnow.setDepartureDate(LocalDate.of(2019, 11, 26));
+		johnSnow.setStatus(ACTIVE);
+
+		Reservation existingReservation = reservationRepository.save(johnSnow).block();
+
+		// WHEN the status is updated
+		reservationRepository
+			.updateStatusById(CANCELLED.getCode(), existingReservation.getUniqueBookingIdentifier()).block();
+
+		// THEN if searched again the status will be the new one
+		StepVerifier.create(reservationRepository.findByEmail("jsnow@volcano.com"))
+			.expectNextMatches(newReservation ->
+				newReservation.getStatus() == CANCELLED
+					&& "John".equals(newReservation.getUserFirstName())
+					&& "Snow".equals(newReservation.getUserLastName())
+			)
+			.expectComplete()
+			.verify();
+
 	}
 
 	private void assertFound(Reservation found) {

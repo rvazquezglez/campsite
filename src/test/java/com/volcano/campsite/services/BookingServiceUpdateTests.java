@@ -18,7 +18,7 @@ import static org.mockito.Mockito.*;
 class BookingServiceUpdateTests {
 
 	@Test
-	void bookTest() {
+	void updateTest() {
 		// GIVEN a "happy path" reservation request
 		ReservationRequest reservation = new ReservationRequest();
 		LocalDate arrivalDate = LocalDate.now().plus(1, DAYS);
@@ -31,6 +31,7 @@ class BookingServiceUpdateTests {
 		when(reservationService.findByDateRange(any(), any())).thenReturn(Flux.empty());
 		Reservation saved = new Reservation();
 		saved.setUniqueBookingIdentifier(12);
+		when(reservationService.cancel(any())).thenReturn(Mono.empty());
 		when(reservationService.save(any())).thenReturn(Mono.just(saved));
 
 		// WHEN trying to reserve
@@ -49,7 +50,7 @@ class BookingServiceUpdateTests {
 	}
 
 	@Test
-	void bookWithinExistingReservationTest() {
+	void updateWithinExistingReservationTest() {
 		// GIVEN a request for a range that has already been booked
 		ReservationRequest reservation = new ReservationRequest();
 		LocalDate arrivalDate = LocalDate.now().plus(1, DAYS);
@@ -57,12 +58,13 @@ class BookingServiceUpdateTests {
 		LocalDate departureDate = arrivalDate.plus(2, DAYS);
 		reservation.setDepartureDate(departureDate);
 
-		ReservationService reservationService = mock(ReservationService.class);
 		Reservation existingReservation = new Reservation();
 		existingReservation.setArrivalDate(arrivalDate);
 		existingReservation.setDepartureDate(departureDate);
 
+		ReservationService reservationService = mock(ReservationService.class);
 		when(reservationService.findByDateRange(any(), any())).thenReturn(Flux.just(existingReservation));
+		when(reservationService.cancel(any())).thenReturn(Mono.empty());
 
 		// WHEN trying to reserve
 		Mono<Reservation> reservationMono = new BookingService(reservationService).update(123, reservation);
@@ -82,15 +84,18 @@ class BookingServiceUpdateTests {
 	}
 
 	@Test
-	void bookMoreThanThreeDaysTest() {
+	void updateMoreThanThreeDaysTest() {
 		// GIVEN a reservation request for more than 3 days
 		ReservationRequest reservation = new ReservationRequest();
 		LocalDate arrivalDate = LocalDate.now().plus(2, DAYS);
 		reservation.setArrivalDate(arrivalDate);
 		reservation.setDepartureDate(arrivalDate.plus(5, DAYS));
 
+		ReservationService reservationService = mock(ReservationService.class);
+		when(reservationService.cancel(any())).thenReturn(Mono.empty());
+
 		// WHEN trying to reserve
-		Mono<Reservation> reservationMono = new BookingService(null).update(123, reservation);
+		Mono<Reservation> reservationMono = new BookingService(reservationService).update(123, reservation);
 
 		// THEN
 		StepVerifier.create(reservationMono)
@@ -103,15 +108,18 @@ class BookingServiceUpdateTests {
 	}
 
 	@Test
-	void bookLessThanOneDayOfArrivalTest() {
+	void updateLessThanOneDayOfArrivalTest() {
 		// GIVEN a reservation request less than 1 day ahead of arrival
 		ReservationRequest reservation = new ReservationRequest();
 		LocalDate arrivalDate = LocalDate.now();
 		reservation.setArrivalDate(arrivalDate);
 		reservation.setDepartureDate(arrivalDate.plus(2, DAYS));
 
+		ReservationService reservationService = mock(ReservationService.class);
+		when(reservationService.cancel(any())).thenReturn(Mono.empty());
+
 		// WHEN trying to reserve
-		Mono<Reservation> reservationMono = new BookingService(null).update(123, reservation);
+		Mono<Reservation> reservationMono = new BookingService(reservationService).update(123, reservation);
 
 		// THEN
 		StepVerifier.create(reservationMono)
@@ -125,15 +133,18 @@ class BookingServiceUpdateTests {
 	}
 
 	@Test
-	void bookMoreThanOneMonthInAdvanceTest() {
+	void updateMoreThanOneMonthInAdvanceTest() {
 		// GIVEN a reservation request for more than one month in advance
 		ReservationRequest reservation = new ReservationRequest();
 		LocalDate arrivalDate = LocalDate.now().plus(1, MONTHS);
 		reservation.setArrivalDate(arrivalDate);
 		reservation.setDepartureDate(arrivalDate.plus(2, DAYS));
 
+		ReservationService reservationService = mock(ReservationService.class);
+		when(reservationService.cancel(any())).thenReturn(Mono.empty());
+
 		// WHEN trying to reserve
-		Mono<Reservation> reservationMono = new BookingService(null).update(123, reservation);
+		Mono<Reservation> reservationMono = new BookingService(reservationService).update(123, reservation);
 
 		// THEN
 		StepVerifier.create(reservationMono)

@@ -39,7 +39,7 @@ class ReservationControllerCancelSuccessTest {
 		reservation.setUniqueBookingIdentifier(123);
 		reservation.setStatus(Reservation.Status.CANCELLED);
 
-		when(bookingService.cancel(any())).thenReturn(Mono.just(reservation));
+		when(bookingService.cancel(any())).thenReturn(Mono.empty());
 	}
 
 	@Test

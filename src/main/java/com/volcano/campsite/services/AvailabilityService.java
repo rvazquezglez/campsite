@@ -24,6 +24,9 @@ public class AvailabilityService {
 		key = "{#arrivalDate, #departureDate}"
 	)
 	public List<Reservation> findByDateRange(LocalDate arrivalDate, LocalDate departureDate) {
-		return reservationRepository.findActiveByDateRange(ACTIVE.getCode(), arrivalDate, departureDate).collectList().block();
+		return reservationRepository
+			.findActiveByDateRange(ACTIVE.getCode(), arrivalDate, departureDate)
+			.collectList()
+			.block();
 	}
 }

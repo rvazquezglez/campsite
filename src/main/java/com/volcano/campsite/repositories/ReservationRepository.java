@@ -5,6 +5,7 @@ import org.springframework.data.r2dbc.repository.query.Query;
 import org.springframework.data.repository.reactive.ReactiveCrudRepository;
 import org.springframework.stereotype.Repository;
 import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 import java.time.LocalDate;
 
@@ -35,4 +36,7 @@ public interface ReservationRepository extends ReactiveCrudRepository<Reservatio
 			+ "AND status = :status") // SpEL expressions seems not yet supported by r2dbc, otherwise status parameter
 		 							  // would be enum and the part of the query would be like `:#{status.code}`
 	Flux<Reservation> findActiveByDateRange(Integer status, LocalDate arrivalDate, LocalDate departureDate);
+
+	@Query("UPDATE reservations SET status = :code WHERE ubi = :bookingId")
+	Mono<Void> updateStatusById(int code, Integer bookingId);
 }

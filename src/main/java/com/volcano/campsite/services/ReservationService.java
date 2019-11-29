@@ -11,6 +11,7 @@ import java.time.LocalDate;
 
 import static com.volcano.campsite.config.CacheConfiguration.RESERVATIONS_CACHE;
 import static com.volcano.campsite.entities.Reservation.Status.ACTIVE;
+import static com.volcano.campsite.entities.Reservation.Status.CANCELLED;
 
 @Service
 public class ReservationService {
@@ -31,5 +32,13 @@ public class ReservationService {
 	)
 	public Mono<Reservation> save(Reservation reservation) {
 		return reservationRepository.save(reservation);
+	}
+
+	@CacheEvict(
+		value = RESERVATIONS_CACHE,
+		allEntries = true
+	)
+	public Mono<Void> cancel(Integer bookingId) {
+		return reservationRepository.updateStatusById(CANCELLED.getCode(), bookingId);
 	}
 }
