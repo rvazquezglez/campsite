@@ -28,6 +28,17 @@ public class ReservationRequest {
 	@NotEmpty(message = "Last name should not be empty")
 	private String userLastName;
 
+	public Reservation toReservation() {
+		Reservation reservation = new Reservation();
+		reservation.setArrivalDate(arrivalDate);
+		reservation.setDepartureDate(departureDate);
+		reservation.setUserEmail(userEmail);
+		reservation.setUserFirstName(userFirstName);
+		reservation.setUserLastName(userLastName);
+
+		return reservation;
+	}
+
 	public LocalDate getArrivalDate() {
 		return arrivalDate;
 	}
@@ -68,14 +79,14 @@ public class ReservationRequest {
 		this.userLastName = userLastName;
 	}
 
-	public Reservation toReservation() {
-		Reservation reservation = new Reservation();
-		reservation.setArrivalDate(arrivalDate);
-		reservation.setDepartureDate(departureDate);
-		reservation.setUserEmail(userEmail);
-		reservation.setUserFirstName(userFirstName);
-		reservation.setUserLastName(userLastName);
-
-		return reservation;
+	@Override
+	public String toString() {
+		return "ReservationRequest{" +
+			"arrivalDate=" + arrivalDate +
+			", departureDate=" + departureDate +
+			", userEmail='" + userEmail + '\'' +
+			", userFirstName='" + userFirstName + '\'' +
+			", userLastName='" + userLastName + '\'' +
+			'}';
 	}
 }

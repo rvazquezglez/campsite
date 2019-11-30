@@ -4,6 +4,7 @@ import com.volcano.campsite.entities.Reservation;
 import com.volcano.campsite.repositories.ReservationRepository;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
@@ -22,6 +23,7 @@ public class ReservationService {
 	}
 
 	// Not cached, for cached version use AvailabilityService
+	@Transactional("transactionManager")
 	public Flux<Reservation> findByDateRange(LocalDate arrivalDate, LocalDate departureDate) {
 		return reservationRepository.findActiveByDateRange(ACTIVE.getCode(), arrivalDate, departureDate);
 	}

@@ -4,15 +4,20 @@ import com.volcano.campsite.controllers.reservation.dtos.ReservationErrorRespons
 import com.volcano.campsite.controllers.reservation.dtos.ReservationRequest;
 import com.volcano.campsite.controllers.reservation.dtos.ReservationSuccessResponse;
 import com.volcano.campsite.services.BookingService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Mono;
 
 import javax.validation.Valid;
 
+
 @RestController
 @RequestMapping("/reservations")
 public class ReservationController {
+
+	private Logger logger = LoggerFactory.getLogger(ReservationController.class);
 
 	private final BookingService reservationService;
 
@@ -22,6 +27,7 @@ public class ReservationController {
 
 	@PostMapping
 	public Mono<ResponseEntity<?>> book(@Valid @RequestBody ReservationRequest reservationRequest) {
+		logger.debug("Got booking request {}.", reservationRequest);
 		return reservationService.book(reservationRequest)
 			.<ResponseEntity<?>>flatMap(reservation -> {
 				ReservationSuccessResponse response = new ReservationSuccessResponse();
@@ -29,15 +35,19 @@ public class ReservationController {
 				response.setUniqueBookingIdentifier(bookingId);
 				response.setMessage("Reservation " + bookingId + " successfully created.");
 
+				logger.info("Booking completed successfully.");
 				return Mono.just(ResponseEntity.ok(response));
 			})
-			.onErrorResume(throwable ->
-				Mono.just(ResponseEntity.status(500).body(
-					getReservationErrorResponse(
-						"Not booked",
-						"Could not create booking. " + throwable.getMessage()
-					))
-				)
+			.onErrorResume(throwable -> {
+					logger.warn("Booking could not be completed. " + throwable.getMessage());
+
+					return Mono.just(ResponseEntity.status(500).body(
+						getReservationErrorResponse(
+							"Not booked",
+							"Could not create booking. " + throwable.getMessage()
+						))
+					);
+				}
 			);
 	}
 
@@ -92,5 +102,4 @@ public class ReservationController {
 		reservationErrorResponse.setErrorDescription(errorDescription);
 		return reservationErrorResponse;
 	}
-
 }

@@ -4,6 +4,7 @@ import com.volcano.campsite.controllers.reservation.dtos.ReservationRequest;
 import com.volcano.campsite.entities.Reservation;
 import com.volcano.campsite.util.DateUtil;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 import reactor.core.publisher.Mono;
 
@@ -21,7 +22,10 @@ public class BookingService {
 		this.reservationService = reservationService;
 	}
 
-	@Transactional("transactionManager")
+	@Transactional(
+		value = "transactionManager",
+		isolation = Isolation.SERIALIZABLE
+	)
 	public Mono<Reservation> book(ReservationRequest reservationRequest) {
 		Mono<Reservation> errorOrEmpty = performValidations(reservationRequest);
 		return errorOrEmpty.switchIfEmpty(
@@ -31,13 +35,19 @@ public class BookingService {
 		);
 	}
 
-	@Transactional("transactionManager")
+	@Transactional(
+		value = "transactionManager",
+		isolation = Isolation.SERIALIZABLE
+	)
 	public Mono<Void> cancel(Integer bookingId) {
 		return reservationService.cancel(bookingId);
 	}
 
 
-	@Transactional("transactionManager")
+	@Transactional(
+		value = "transactionManager",
+		isolation = Isolation.SERIALIZABLE
+	)
 	public Mono<Reservation> update(Integer bookingId, ReservationRequest reservationRequest) {
 		return reservationService.cancel(bookingId)
 			.then(performValidations(reservationRequest)
@@ -48,7 +58,8 @@ public class BookingService {
 				));
 	}
 
-	private Mono<Reservation> performValidations(ReservationRequest reservationRequest) {
+	@Transactional("transactionManager")
+	Mono<Reservation> performValidations(ReservationRequest reservationRequest) {
 		if (LocalDate.now().compareTo(reservationRequest.getArrivalDate()) >= 0) {
 			return Mono.error(
 				new ReservationOutOfRangeException(
@@ -81,7 +92,7 @@ public class BookingService {
 		return reservationService
 			.findByDateRange(reservationRequest.getArrivalDate(), reservationRequest.getDepartureDate())
 			.singleOrEmpty()
-			.<Reservation>flatMap(reservation ->
+			.flatMap(reservation ->
 				Mono.error(new ReservationOutOfRangeException(
 					"Date range from "
 						+ DateUtil.format(reservation.getArrivalDate())
