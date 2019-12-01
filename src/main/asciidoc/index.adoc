@@ -1,0 +1,105 @@
+= Volcano campsite REST API
+v{version}, Raul Vazquez, {date}
+:doctype: book
+:icons: font
+:source-highlighter: highlightjs
+:highlightjs-theme: github
+:toc: left
+:toclevels: 3
+:sectlinks:
+:sectnums:
+
+[introduction]
+== Introduction
+An underwater volcano formed a new small island in the Pacific Ocean last month. All the conditions on the island seems perfect and it was
+decided to open it up for the general public to experience the pristine uncharted territory.
+The island is big enough to host a single campsite so everybody is very excited to visit. In order to regulate the number of people on the island, it
+was decided to come up with an online web application to manage the reservations.
+
+This REST API service manages the campsite reservations. In general all endpoints are open to anyone there's no restriction on them.
+
+== Getting availability
+Before booking you need to find out when the campsite is available. This endpoint will tell you which dates are already booked.
+
+=== Parameters for getting availability
+If parameters are not provided the date range is 1 month by default.
+
+include::{snippets}/availabilityByDateRange/request-parameters.adoc[]
+
+=== Response fields when getting availability
+
+include::{snippets}/availabilityByDateRange/response-fields.adoc[]
+
+=== Example Request
+include::{snippets}/availabilityByDateRange/http-request.adoc[]
+
+=== Example Response
+include::{snippets}/availabilityByDateRange/http-response.adoc[]
+
+== Booking a Reservation
+To get a successful reservation there are a couple of rules:
+
+- The campsite can be reserved for max 3 days.
+- The campsite can be reserved minimum 1 day(s) ahead of arrival and up to 1 month in advance.
+
+The booking endpoint uses an http `POST` method.
+
+=== Request fields for booking
+
+include::{snippets}/successfulReservation/request-fields.adoc[]
+
+=== Response fields when booking
+
+include::{snippets}/successfulReservation/response-fields.adoc[]
+
+=== Example Request
+include::{snippets}/successfulReservation/http-request.adoc[]
+
+=== Example Response
+include::{snippets}/successfulReservation/http-response.adoc[]
+
+=== Example error
+include::{snippets}/errorReservation/http-response.adoc[]
+
+== Updating a reservation
+The same rules for booking apply when updating a reservation. A new booking identifier is generated after updating the reservation.
+
+The booking endpoint uses an http `PUT` method.
+
+=== Request fields needed when updating
+
+include::{snippets}/successfulReservationUpdate/request-fields.adoc[]
+
+=== Request fields on update response
+
+include::{snippets}/successfulReservationUpdate/response-fields.adoc[]
+
+=== Example Request
+include::{snippets}/successfulReservationUpdate/http-request.adoc[]
+
+=== Example Response
+include::{snippets}/successfulReservationUpdate/http-response.adoc[]
+
+=== Example error
+include::{snippets}/errorReservationUpdate/http-response.adoc[]
+
+
+== Cancelling a reservation
+Reservations can be cancelled anytime.
+
+=== Parameters cancelling a reservation
+
+include::{snippets}/successfulReservationCancellation/path-parameters.adoc[]
+
+=== Parameters on cancellation response
+
+include::{snippets}/successfulReservationCancellation/response-fields.adoc[]
+
+=== Example Request
+include::{snippets}/successfulReservationCancellation/http-request.adoc[]
+
+=== Example Response
+include::{snippets}/successfulReservationCancellation/http-response.adoc[]
+
+=== Example error
+include::{snippets}/errorReservationCancellation/http-response.adoc[]

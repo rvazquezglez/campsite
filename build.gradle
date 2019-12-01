@@ -1,3 +1,5 @@
+import java.text.SimpleDateFormat
+
 plugins {
 	id 'org.springframework.boot' version '2.2.1.RELEASE'
 	id 'io.spring.dependency-management' version '1.0.8.RELEASE'
@@ -48,6 +50,21 @@ test {
 }
 
 asciidoctor {
+	attributes "snippets": snippetsDir,
+		"version": version,
+		"linkcss": true,
+		"date": new SimpleDateFormat("yyyy-MM-dd").format(new Date())
 	inputs.dir snippetsDir
 	dependsOn test
+	sourceDir "src/main/asciidoc"
+	outputDir "build/docs"
+	doLast {
+		copy {
+			from 'build/docs/html5'
+			into "$projectDir/docs"
+//			include 'index.html'
+		}
+	}
 }
+
+build.dependsOn asciidoctor

@@ -1,0 +1,531 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<!--[if IE]><meta http-equiv="X-UA-Compatible" content="IE=edge"><![endif]-->
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="generator" content="Asciidoctor 1.5.6.1">
+<meta name="author" content="v0.0.1-SNAPSHOT, Raul Vazquez, 2019-12-01">
+<title>Volcano campsite REST API</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic%7CNoto+Serif:400,400italic,700,700italic%7CDroid+Sans+Mono:400,700">
+<link rel="stylesheet" href="./asciidoctor.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.6.3/css/font-awesome.min.css">
+</head>
+<body class="book toc2 toc-left">
+<div id="header">
+<h1>Volcano campsite REST API</h1>
+<div class="details">
+<span id="author" class="author">v0.0.1-SNAPSHOT, Raul Vazquez, 2019-12-01</span><br>
+</div>
+<div id="toc" class="toc2">
+<div id="toctitle">Table of Contents</div>
+<ul class="sectlevel1">
+<li><a href="#_introduction">Introduction</a></li>
+<li><a href="#_getting_availability">1. Getting availability</a>
+<ul class="sectlevel2">
+<li><a href="#_parameters_for_getting_availability">1.1. Parameters for getting availability</a></li>
+<li><a href="#_response_fields_when_getting_availability">1.2. Response fields when getting availability</a></li>
+<li><a href="#_example_request">1.3. Example Request</a></li>
+<li><a href="#_example_response">1.4. Example Response</a></li>
+</ul>
+</li>
+<li><a href="#_booking_a_reservation">2. Booking a Reservation</a>
+<ul class="sectlevel2">
+<li><a href="#_request_fields_for_booking">2.1. Request fields for booking</a></li>
+<li><a href="#_response_fields_when_booking">2.2. Response fields when booking</a></li>
+<li><a href="#_example_request_2">2.3. Example Request</a></li>
+<li><a href="#_example_response_2">2.4. Example Response</a></li>
+<li><a href="#_example_error">2.5. Example error</a></li>
+</ul>
+</li>
+<li><a href="#_updating_a_reservation">3. Updating a reservation</a>
+<ul class="sectlevel2">
+<li><a href="#_request_fields_needed_when_updating">3.1. Request fields needed when updating</a></li>
+<li><a href="#_request_fields_on_update_response">3.2. Request fields on update response</a></li>
+<li><a href="#_example_request_3">3.3. Example Request</a></li>
+<li><a href="#_example_response_3">3.4. Example Response</a></li>
+<li><a href="#_example_error_2">3.5. Example error</a></li>
+</ul>
+</li>
+<li><a href="#_cancelling_a_reservation">4. Cancelling a reservation</a>
+<ul class="sectlevel2">
+<li><a href="#_parameters_cancelling_a_reservation">4.1. Parameters cancelling a reservation</a></li>
+<li><a href="#_parameters_on_cancellation_response">4.2. Parameters on cancellation response</a></li>
+<li><a href="#_example_request_4">4.3. Example Request</a></li>
+<li><a href="#_example_response_4">4.4. Example Response</a></li>
+<li><a href="#_example_error_3">4.5. Example error</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+<div id="content">
+<div class="sect1">
+<h2 id="_introduction"><a class="link" href="#_introduction">Introduction</a></h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>An underwater volcano formed a new small island in the Pacific Ocean last month. All the conditions on the island seems perfect and it was
+decided to open it up for the general public to experience the pristine uncharted territory.
+The island is big enough to host a single campsite so everybody is very excited to visit. In order to regulate the number of people on the island, it
+was decided to come up with an online web application to manage the reservations.</p>
+</div>
+<div class="paragraph">
+<p>This REST API service manages the campsite reservations. In general all endpoints are open to anyone there&#8217;s no restriction on them.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_getting_availability"><a class="link" href="#_getting_availability">1. Getting availability</a></h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Before booking you need to find out when the campsite is available. This endpoint will tell you which dates are already booked.</p>
+</div>
+<div class="sect2">
+<h3 id="_parameters_for_getting_availability"><a class="link" href="#_parameters_for_getting_availability">1.1. Parameters for getting availability</a></h3>
+<div class="paragraph">
+<p>If parameters are not provided the date range is 1 month by default.</p>
+</div>
+<table class="tableblock frame-all grid-all spread">
+<colgroup>
+<col style="width: 50%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Parameter</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>arrivalDate</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Initial date for date range</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>departureDate</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">End date for date range</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect2">
+<h3 id="_response_fields_when_getting_availability"><a class="link" href="#_response_fields_when_getting_availability">1.2. Response fields when getting availability</a></h3>
+<table class="tableblock frame-all grid-all spread">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Path</th>
+<th class="tableblock halign-left valign-top">Type</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>message</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Success response message.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>notAvailableDates[]</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Array</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Array that contains date range that are not available.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>notAvailableDates[].initialDate</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The initial date for date range.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>notAvailableDates[].endDate</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">End date for date range.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect2">
+<h3 id="_example_request"><a class="link" href="#_example_request">1.3. Example Request</a></h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight nowrap"><code class="language-http hljs" data-lang="http">GET /availability?arrivalDate=2019-11-25&amp;departureDate=2019-12-30 HTTP/1.1
+Accept: application/json
+Host: localhost:8080</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_example_response"><a class="link" href="#_example_response">1.4. Example Response</a></h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight nowrap"><code class="language-http hljs" data-lang="http">HTTP/1.1 200 OK
+Content-Type: application/json
+Content-Length: 183
+
+{"message":"Availability from 2019-11-25 to 2019-11-25.","notAvailableDates":[{"initialDate":"2019-11-25","endDate":"2019-11-26"},{"initialDate":"2019-11-27","endDate":"2019-11-28"}]}</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_booking_a_reservation"><a class="link" href="#_booking_a_reservation">2. Booking a Reservation</a></h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>To get a successful reservation there are a couple of rules:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>The campsite can be reserved for max 3 days.</p>
+</li>
+<li>
+<p>The campsite can be reserved minimum 1 day(s) ahead of arrival and up to 1 month in advance.</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>The booking endpoint uses an http <code>POST</code> method.</p>
+</div>
+<div class="sect2">
+<h3 id="_request_fields_for_booking"><a class="link" href="#_request_fields_for_booking">2.1. Request fields for booking</a></h3>
+<table class="tableblock frame-all grid-all spread">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Path</th>
+<th class="tableblock halign-left valign-top">Type</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>arrivalDate</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The date that user is expected to come to the volcano. It needs to be at least 1 day after the booking date and up to 1 month after it. Expected format is "yyyy-MM-dd".</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>departureDate</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The date that user is expected to leave the volcano. It can max 3 days after arrival. Expected format is "yyyy-MM-dd".</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>userEmail</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The user&#8217;s email. It needs to be a valid email.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>userFirstName</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The user&#8217;s first name.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>userLastName</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The user&#8217;s last name.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect2">
+<h3 id="_response_fields_when_booking"><a class="link" href="#_response_fields_when_booking">2.2. Response fields when booking</a></h3>
+<table class="tableblock frame-all grid-all spread">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Path</th>
+<th class="tableblock halign-left valign-top">Type</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>message</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Message response for when the delete is successful</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>uniqueBookingIdentifier</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The unique identifier for booking when the reservation operation is successful.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect2">
+<h3 id="_example_request_2"><a class="link" href="#_example_request_2">2.3. Example Request</a></h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight nowrap"><code class="language-http hljs" data-lang="http">POST /reservations HTTP/1.1
+Accept: application/json
+Content-Type: application/json
+Content-Length: 132
+Host: localhost:8080
+
+{"arrivalDate":"2019-11-20","departureDate":"2019-11-21","userEmail":"jdoe@volcano.com","userFirstName":"John","userLastName":"Doe"}</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_example_response_2"><a class="link" href="#_example_response_2">2.4. Example Response</a></h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight nowrap"><code class="language-http hljs" data-lang="http">HTTP/1.1 200 OK
+Content-Type: application/json
+Content-Length: 81
+
+{"uniqueBookingIdentifier":123,"message":"Reservation 123 successfully created."}</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_example_error"><a class="link" href="#_example_error">2.5. Example error</a></h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight nowrap"><code class="language-http hljs" data-lang="http">HTTP/1.1 500 Internal Server Error
+Content-Type: application/json
+Content-Length: 88
+
+{"error":"Not booked","errorDescription":"Could not create booking. Error when booking"}</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_updating_a_reservation"><a class="link" href="#_updating_a_reservation">3. Updating a reservation</a></h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>The same rules for booking apply when updating a reservation. A new booking identifier is generated after updating the reservation.</p>
+</div>
+<div class="paragraph">
+<p>The booking endpoint uses an http <code>PUT</code> method.</p>
+</div>
+<div class="sect2">
+<h3 id="_request_fields_needed_when_updating"><a class="link" href="#_request_fields_needed_when_updating">3.1. Request fields needed when updating</a></h3>
+<table class="tableblock frame-all grid-all spread">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Path</th>
+<th class="tableblock halign-left valign-top">Type</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>arrivalDate</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The date that user is expected to come to the volcano. It needs to be at least 1 day after the booking date and up to 1 month after it. Expected format is "yyyy-MM-dd".</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>departureDate</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The date that user is expected to leave the volcano. It can max 3 days after arrival. Expected format is "yyyy-MM-dd".</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>userEmail</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The user&#8217;s email. It needs to be a valid email.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>userFirstName</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The user&#8217;s first name.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>userLastName</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The user&#8217;s last name.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect2">
+<h3 id="_request_fields_on_update_response"><a class="link" href="#_request_fields_on_update_response">3.2. Request fields on update response</a></h3>
+<table class="tableblock frame-all grid-all spread">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Path</th>
+<th class="tableblock halign-left valign-top">Type</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>message</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Message response for when the delete is successful</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>uniqueBookingIdentifier</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The unique identifier for booking when the reservation operation is successful.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect2">
+<h3 id="_example_request_3"><a class="link" href="#_example_request_3">3.3. Example Request</a></h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight nowrap"><code class="language-http hljs" data-lang="http">PUT /reservations/456 HTTP/1.1
+Accept: application/json
+Content-Type: application/json
+Content-Length: 132
+Host: localhost:8080
+
+{"arrivalDate":"2019-11-20","departureDate":"2019-11-21","userEmail":"jdoe@volcano.com","userFirstName":"John","userLastName":"Doe"}</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_example_response_3"><a class="link" href="#_example_response_3">3.4. Example Response</a></h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight nowrap"><code class="language-http hljs" data-lang="http">HTTP/1.1 200 OK
+Content-Type: application/json
+Content-Length: 108
+
+{"uniqueBookingIdentifier":456,"message":"Reservation successfully updated. New booking identifier is: 456"}</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_example_error_2"><a class="link" href="#_example_error_2">3.5. Example error</a></h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight nowrap"><code class="language-http hljs" data-lang="http">HTTP/1.1 500 Internal Server Error
+Content-Type: application/json
+Content-Length: 59
+
+{"error":"Not updated","errorDescription":"error updating"}</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_cancelling_a_reservation"><a class="link" href="#_cancelling_a_reservation">4. Cancelling a reservation</a></h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Reservations can be cancelled anytime.</p>
+</div>
+<div class="sect2">
+<h3 id="_parameters_cancelling_a_reservation"><a class="link" href="#_parameters_cancelling_a_reservation">4.1. Parameters cancelling a reservation</a></h3>
+<table class="tableblock frame-all grid-all spread">
+<caption class="title">Table 1. /reservations/{bookingId}</caption>
+<colgroup>
+<col style="width: 50%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Parameter</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>bookingId</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The unique booking identifier for the reservation to be modified.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect2">
+<h3 id="_parameters_on_cancellation_response"><a class="link" href="#_parameters_on_cancellation_response">4.2. Parameters on cancellation response</a></h3>
+<table class="tableblock frame-all grid-all spread">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Path</th>
+<th class="tableblock halign-left valign-top">Type</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>message</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Message response for when the delete is successful</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>uniqueBookingIdentifier</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The unique identifier for booking when the reservation operation is successful.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect2">
+<h3 id="_example_request_4"><a class="link" href="#_example_request_4">4.3. Example Request</a></h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight nowrap"><code class="language-http hljs" data-lang="http">DELETE /reservations/123 HTTP/1.1
+Accept: application/json
+Host: localhost:8080</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_example_response_4"><a class="link" href="#_example_response_4">4.4. Example Response</a></h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight nowrap"><code class="language-http hljs" data-lang="http">HTTP/1.1 200 OK
+Content-Type: application/json
+Content-Length: 83
+
+{"uniqueBookingIdentifier":123,"message":"Reservation 123 successfully cancelled."}</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_example_error_3"><a class="link" href="#_example_error_3">4.5. Example error</a></h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight nowrap"><code class="language-http hljs" data-lang="http">HTTP/1.1 500 Internal Server Error
+Content-Type: application/json
+Content-Length: 103
+
+{"error":"Not cancelled","errorDescription":"Reservation 123 could not be cancelled. Error cancelling"}</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div id="footer">
+<div id="footer-text">
+Last updated 2019-12-01 08:17:49 CST
+</div>
+</div>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/github.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
+<script>hljs.initHighlighting()</script>
+</body>
+</html>

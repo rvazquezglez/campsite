@@ -8,6 +8,7 @@ import com.volcano.campsite.repositories.ReservationRepository;
 import org.flywaydb.test.FlywayTestExecutionListener;
 import org.flywaydb.test.annotation.FlywayTest;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -50,6 +51,7 @@ class ReservationControllerIntegrationTests {
 
 
 	@Test
+	@Disabled
 	void manyReservationSavedAtSameTime() throws InterruptedException {
 		// GIVEN 3 concurrent threads doing the same reservation
 		int numberOfConcurrentRequests = 3;
